@@ -14,6 +14,7 @@ type RootStackParamList = {
   Welcome: undefined;
   Login: undefined;
   Home: undefined;
+  
 };
 
 export default function WelcomeScreen() {

@@ -5,15 +5,16 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  Image,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { StatusBar } from "expo-status-bar"; // Thêm StatusBar từ expo
 
-import { useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const mockClassDetail = {
-  name: "CĐTH22 TTTN",
+  name: "CĐ TH 22 - TTTN",
   teacher: "Nguyễn Lê Việt Hoàng",
   term: "HK2 – Năm học: 2024-2025",
   subject: "Công nghệ phần mềm",
@@ -26,17 +27,26 @@ const mockClassDetail = {
       id: "1",
       title: "Hướng Dẫn Tạo Web API Đơn Giản với Python (FASTAPI)",
       date: "7 thg 1",
+      teacher: "Nguyễn Lê Việt Hoàng",
+      message: "tài liệu đây các em",
+      file: "tailieu",
       type: "Tài liệu mới",
     },
     {
       id: "2",
       title: "Thang Điểm Chấm",
+      teacher: "Nguyễn Lê Việt Hoàng",
+      message: "tài liệu đây các em",
+      file: "tailieu",
       date: "4 thg 1",
       type: "Tài liệu mới",
     },
     {
       id: "3",
       title: "Hướng Dẫn Web API Đơn Giản Với PHP",
+      teacher: "Nguyễn Lê Việt Hoàng",
+      message: "tài liệu đây các em",
+      file: "tailieu",
       date: "2 thg 1",
       type: "Tài liệu mới",
     },
@@ -47,66 +57,106 @@ export default function ClassroomDetailScreen() {
   const route = useRoute();
   const { classId } = route.params;
 
+  const navigation = useNavigation();
+
   const materials = mockClassDetail.materials;
 
   return (
     <View style={styles.container}>
       {/* Ẩn thanh trạng thái hệ thống */}
-      <StatusBar style="light" hidden={false}/>
-<SafeAreaView style={styles.statusBarBackground}>
-        
-      </SafeAreaView>
+      <StatusBar style="light" hidden={false} />
+      <SafeAreaView style={styles.statusBarBackground}></SafeAreaView>
       {/* Nội dung chính */}
       <View style={styles.headerContainer}>
         {/* Thanh menu trên */}
         <View style={styles.header}>
-          <Ionicons name="menu" size={24} color="white" />
-          <Text style={styles.headerText}>Google Classroom</Text>
-          <Ionicons name="information-circle-outline" size={24} color="white" />
+          <Ionicons
+            name="menu"
+            size={24}
+            color="white"
+            style={{ marginTop: 10 }}
+          />
+          <View style={{ flexDirection: "row", gap: 25, marginTop: 10 }}>
+            <Ionicons name="videocam-outline" size={24} color="white" />
+            <Ionicons
+              name="information-circle-outline"
+              size={24}
+              color="white"
+            />
+            <Ionicons name="ellipsis-vertical" size={24} color="white" />
+          </View>
         </View>
 
         {/* Class Name Box */}
-        <View style={styles.classBox}>
-          <Text style={styles.className}>{mockClassDetail.name}</Text>
-          <Text style={styles.classTerm}>{mockClassDetail.term}</Text>
-        </View>
+        <ScrollView
+          contentContainerStyle={styles.contentContainer}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.classBox}>
+            <Text style={styles.className}>{mockClassDetail.name}</Text>
+            <Text style={styles.classTerm}>{mockClassDetail.term}</Text>
+          </View>
 
-        {/* Announcements */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Thông báo</Text>
-          {mockClassDetail.announcements.map((announcement, index) => (
-            <Text key={index} style={styles.sectionText}>
-              {announcement}
+          {/* Announcements */}
+
+          <View style={styles.annoucement}>
+            <Image
+              source={require("../assets/icon.png")}
+              style={styles.avatar}
+            />
+            <Text style={styles.annoucementContent}>
+              Thông báo gì đó đến cho lớp
             </Text>
-          ))}
-        </View>
+          </View>
 
-        {/* Materials */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Tài liệu</Text>
-          {materials.map((material) => (
-            <View key={material.id} style={styles.material}>
-              <Text style={styles.materialTitle}>{material.title}</Text>
-              <Text style={styles.materialDate}>
-                Ngày đăng: {material.date}
-              </Text>
-            </View>
-          ))}
-        </View>
+          {/* Materials */}
+          <View style={styles.section}>
+            {materials.map((material) => (
+              <View key={material.id} style={styles.material}>
+                {/* Avatar và thông tin người dùng */}
+                <View style={styles.materialInfo}>
+                  <Image
+                    source={require("../assets/icon.png")}
+                    style={styles.avatar}
+                  />
+                  <View style={styles.headerTextContainer}>
+                    <Text style={styles.userName}>{material.teacher}</Text>
+                    <Text style={styles.date}>{material.date}</Text>
+                  </View>
+                </View>
+
+                {/* Nội dung thông báo */}
+                <Text style={styles.message}>{material.message}</Text>
+
+                {/* Tài liệu đính kèm */}
+                {material.file && (
+                  <View style={styles.fileContainer}>
+                    <Ionicons
+                      name="document-text-outline"
+                      size={24}
+                      color="white"
+                    />
+                    <Text style={styles.fileText}>{material.file}</Text>
+                  </View>
+                )}
+              </View>
+            ))}
+          </View>
+        </ScrollView>
       </View>
 
       {/* Thanh menu dưới cùng */}
       <View style={styles.tabBar}>
-        <TouchableOpacity style={styles.tabItem}>
-          <Ionicons name="home" size={24} color="white" />
+        <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate("Login")}>
+          <Ionicons name="reader-outline" size={24} color="white" />
           <Text style={styles.tabText}>Bảng tin</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.tabItem}>
-          <Ionicons name="clipboard" size={24} color="white" />
+        <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate("Assignment")}>
+          <Ionicons name="documents-outline" size={24} color="white" />
           <Text style={styles.tabText}>Bài tập</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.tabItem}>
-          <Ionicons name="people" size={24} color="white" />
+        <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate("People")}>
+          <Ionicons name="people-outline" size={24} color="white" />
           <Text style={styles.tabText}>Mọi người</Text>
         </TouchableOpacity>
       </View>
@@ -121,22 +171,28 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#211f1f",
   },
-   statusBarBackground: {
-    backgroundColor: 'black', // Màu nền của thanh StatusBar
+  contentContainer: {
+    paddingHorizontal: 6,
+    backgroundColor: "#333", // Màu nền của toàn bộ phần cuộn
+  },
+  statusBarBackground: {
+    backgroundColor: "black", // Màu nền của thanh StatusBar
     height: 10, // Chiều cao của thanh StatusBar
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom:-85,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: -85,
   },
   headerContainer: {
     flex: 1,
-    paddingTop: 40, // Bù đắp cho thanh status bị ẩn
+    paddingTop: 40,
   },
   header: {
     flexDirection: "row",
+    height: 80,
     alignItems: "center",
     justifyContent: "space-between",
     padding: 16,
+    paddingBottom: 28,
     backgroundColor: "#211f1f",
     zIndex: 1,
   },
@@ -147,55 +203,100 @@ const styles = StyleSheet.create({
   },
   classBox: {
     backgroundColor: "#2563eb",
-    padding: 16,
-    alignItems: "center",
-    marginTop: 20,
+    paddingVertical: 18,
+    paddingHorizontal: 14,
+    alignItems: "flex-start",
+    justifyContent: "flex-end",
+    marginTop: 10,
+    borderRadius: 10,
+    height: 130,
   },
   className: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "white",
+    fontSize: 28,
+    fontWeight: "normal",
+    color: "#f5eaea",
   },
   classTerm: {
-    color: "#bbb",
-    fontSize: 14,
+    color: "#f5eaea",
+    fontSize: 16,
+    fontWeight: "500",
   },
   section: {
-    marginTop: 20,
-    paddingHorizontal: 16,
-  },
-  sectionTitle: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
+    marginTop: 8,
     marginBottom: 8,
   },
-  sectionText: {
+  annoucement: {
+    flexDirection: "row",
+    gap: 10,
+    marginTop: 8,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: "#bbb",
+    borderRadius: 10,
+  },
+  annoucementContent: {
+    flexWrap: "wrap",
+    marginTop: 10,
     color: "#bbb",
-    fontSize: 14,
-    marginBottom: 4,
+    fontSize: 12,
   },
   material: {
-    backgroundColor: "#1f2937",
-    borderRadius: 8,
     padding: 16,
     marginBottom: 16,
+    borderWidth: 1,
+    borderColor: "#bbb",
+    borderRadius: 10,
   },
-  materialTitle: {
-    color: "#fff",
-    fontSize: 18,
+  materialInfo: {
+    flexDirection: "row",
+    gap: 15,
+
+    flexWrap: "wrap",
+  },
+
+  avatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+  },
+  headerTextContainer: {
+    flexDirection: "column",
+  },
+  userName: {
+    color: "white",
     fontWeight: "bold",
+    fontSize: 16,
+    flexWrap: "wrap",
   },
-  materialDate: {
+  date: {
+    marginTop: 2,
     color: "#bbb",
+    fontSize: 12,
+  },
+  message: {
+    color: "#ddd",
     fontSize: 14,
-    marginTop: 4,
+    marginTop: 20,
+    marginBottom: 9,
+    flexWrap: "wrap",
+  },
+  fileContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#2563eb",
+    padding: 8,
+    borderRadius: 6,
+  },
+  fileText: {
+    color: "white",
+    marginLeft: 8,
+    fontSize: 14,
   },
   tabBar: {
     flexDirection: "row",
     justifyContent: "space-around",
     backgroundColor: "#1f2937",
-    marginBottom:50,
+    marginBottom: 50,
     paddingVertical: 14,
     paddingHorizontal: 0,
   },
